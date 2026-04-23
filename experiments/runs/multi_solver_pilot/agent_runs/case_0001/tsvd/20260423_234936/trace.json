@@ -1,0 +1,28 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 0.01,
+    "reg_order": 1,
+    "residual_norm": 1.332788864198316,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.08567491306950577,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_success_weak_pass",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.25, L1_rough=214238.4035",
+      "Fit is good but regularisation balance is uncertain"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides"
+    ]
+  }
+]

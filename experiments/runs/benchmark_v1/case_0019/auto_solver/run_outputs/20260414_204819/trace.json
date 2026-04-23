@@ -1,0 +1,25 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 2.6422094577264397e-09,
+    "reg_order": 1,
+    "residual_norm": 1.592321875789906,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.10235832692752111,
+    "tradeoff": "under_regularized",
+    "replanning_action": "switch_reg_order_to_2",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.23, L1_rough=143533.7107",
+      "Fit is good but regularisation balance is uncertain"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda"
+    ]
+  }
+]

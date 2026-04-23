@@ -1,0 +1,26 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 9.057323666208812e-09,
+    "reg_order": 1,
+    "residual_norm": 3.9693327647930343,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.5041057652347345,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_success_weak_pass",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.09, L1_rough=46904.6764",
+      "Fit marginal: rmse=0.5041, rel_err=0.0271"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=6 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied"
+    ]
+  }
+]

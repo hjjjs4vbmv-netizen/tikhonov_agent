@@ -1,0 +1,51 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 7.578693811968019e-10,
+    "reg_order": 0,
+    "residual_norm": 1.58090430124539,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.10162437743796392,
+    "tradeoff": "under_regularized",
+    "replanning_action": "switch_reg_order_to_1",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.23, L1_rough=138666.9832",
+      "Fit is good but regularisation balance is uncertain"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=0 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied"
+    ]
+  },
+  {
+    "iteration": 1,
+    "lambda_used": 2.6422094577264397e-09,
+    "reg_order": 1,
+    "residual_norm": 1.5685231175260232,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.10082848480459257,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_success_weak_pass",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.18, L1_rough=131296.9012",
+      "Fit is good but regularisation balance is uncertain"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=0 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: oscillatory solution \u2192 increase reg_order to 1"
+    ]
+  }
+]

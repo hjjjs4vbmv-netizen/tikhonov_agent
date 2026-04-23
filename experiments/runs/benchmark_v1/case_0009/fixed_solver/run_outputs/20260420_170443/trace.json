@@ -1,0 +1,26 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 1.0,
+    "reg_order": 1,
+    "residual_norm": 35.1174763068092,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 2.2574368758820635,
+    "tradeoff": "well_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Discrepancy principle: ||r||=35.1175 is above target=7.7782 (rel_dev=3.51)",
+      "Fit failed: rmse=2.2574 > threshold 2.0"
+    ],
+    "suggested": [
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_value=1.0 supplied \u2192 strategy forced to 'fixed'"
+    ]
+  }
+]

@@ -1,0 +1,263 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 8.859127898186546e-06,
+    "reg_order": 1,
+    "residual_norm": 77.9111129419082,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 5.0083160264558435,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=20502.8285",
+      "Fit failed: rmse=5.0083 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied"
+    ]
+  },
+  {
+    "iteration": 1,
+    "lambda_used": 1.7718255796373091e-06,
+    "reg_order": 1,
+    "residual_norm": 75.91407539878304,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 4.8799415910896675,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=37641.0806",
+      "Fit failed: rmse=4.8799 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 2,
+    "lambda_used": 8.859127898186546e-06,
+    "reg_order": 1,
+    "residual_norm": 77.9111129419082,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 5.0083160264558435,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=20502.8285",
+      "Fit failed: rmse=5.0083 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 3,
+    "lambda_used": 1.7718255796373091e-06,
+    "reg_order": 1,
+    "residual_norm": 75.91407539878304,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 4.8799415910896675,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=37641.0806",
+      "Fit failed: rmse=4.8799 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter2: lambda decreased to 1.772e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 4,
+    "lambda_used": 8.859127898186546e-06,
+    "reg_order": 1,
+    "residual_norm": 77.9111129419082,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 5.0083160264558435,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=20502.8285",
+      "Fit failed: rmse=5.0083 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter2: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter3: lambda increased to 8.859e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 5,
+    "lambda_used": 1.7718255796373091e-06,
+    "reg_order": 1,
+    "residual_norm": 75.91407539878304,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 4.8799415910896675,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=37641.0806",
+      "Fit failed: rmse=4.8799 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter2: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter3: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter4: lambda decreased to 1.772e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 6,
+    "lambda_used": 8.859127898186546e-06,
+    "reg_order": 1,
+    "residual_norm": 77.9111129419082,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 5.0083160264558435,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=20502.8285",
+      "Fit failed: rmse=5.0083 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter2: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter3: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter4: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter5: lambda increased to 8.859e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 7,
+    "lambda_used": 1.7718255796373091e-06,
+    "reg_order": 1,
+    "residual_norm": 75.91407539878304,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 4.8799415910896675,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=37641.0806",
+      "Fit failed: rmse=4.8799 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter2: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter3: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter4: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter5: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter6: lambda decreased to 1.772e-06 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 8,
+    "lambda_used": 8.859127898186546e-06,
+    "reg_order": 1,
+    "residual_norm": 77.9111129419082,
+    "solver_status": "success",
+    "verification_decision": "fail",
+    "replay_rmse": 5.0083160264558435,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_with_failure",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=20502.8285",
+      "Fit failed: rmse=5.0083 > threshold 2.0"
+    ],
+    "suggested": [
+      "increase_lambda",
+      "check_data_quality_or_adjust_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter1: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter2: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter3: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter4: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter5: lambda increased to 8.859e-06 (factor=5.0)",
+      "iter6: lambda decreased to 1.772e-06 (factor=5.0)",
+      "iter7: lambda increased to 8.859e-06 (factor=5.0)"
+    ]
+  }
+]

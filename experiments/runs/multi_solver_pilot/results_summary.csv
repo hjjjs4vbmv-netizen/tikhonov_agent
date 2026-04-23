@@ -1,0 +1,7 @@
+flux_family,solver_name,n_cases,success_rate,flux_rmse_mean,flux_rmse_std,replay_rmse_mean,runtime_mean_s
+step,tikhonov,3,1.0,7546.5,2043.5,0.53597,0.062
+step,tsvd,3,1.0,7651.4,1144.3,0.47713,0.123
+single_pulse,tikhonov,3,1.0,2753.0,970.3,0.49789,0.163
+single_pulse,tsvd,3,1.0,7310.8,5958.6,0.46804,0.19
+smooth_sinusoid,tikhonov,3,1.0,6316.5,2617.5,0.53362,0.06
+smooth_sinusoid,tsvd,3,1.0,5470.8,639.7,0.4725,0.122

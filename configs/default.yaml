@@ -1,0 +1,54 @@
+# default.yaml – default problem configuration for tikhonov_agent
+# All fields shown here are the system defaults; override per-run in
+# a separate config file (e.g. example_case.yaml).
+
+problem_type: "1D_transient_IHCP"
+dimension: 1
+transient: true
+target_name: "boundary_heat_flux"
+
+# Time discretisation
+time:
+  start: 0.0
+  end:   60.0       # [s]
+  n_steps: 120      # dt = 0.5 s
+
+# Spatial domain
+geometry:
+  length:  0.05     # [m]  5 cm rod
+  n_cells: 50       # finite-difference cells
+
+# Material (steel-like defaults)
+material:
+  density:       7800.0   # [kg/m^3]
+  specific_heat:  500.0   # [J/(kg·K)]
+  conductivity:    50.0   # [W/(m·K)]
+
+# Boundary conditions
+# Left boundary (x=0): Neumann — unknown q(t) (inversion target)
+# Right boundary (x=L): Dirichlet or Neumann
+boundary_conditions:
+  right_type:  "dirichlet"
+  right_value: 300.0      # [K]  right-end temperature
+
+# Sensors: x positions [m]
+sensor_positions:
+  - 0.01     # 1 cm from heated surface
+  - 0.03     # 3 cm
+
+# Initial condition (uniform) [K]
+initial_condition: 300.0
+
+# Noise estimate (optional; enables discrepancy principle)
+# noise_std: null
+
+# Path to temperature observations CSV (rows=time, cols=sensors)
+# observations_file: data/demo_temperature.csv
+
+# Inversion planner overrides (optional)
+# planner:
+#   reg_order: 1
+#   lambda_strategy: "lcurve"
+#   max_retries: 6
+#   iteration_budget: 10
+#   physical_bounds: [-1.0e6, 1.0e6]

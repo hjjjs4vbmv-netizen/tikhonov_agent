@@ -1,0 +1,97 @@
+TIKHONOV IHCP SCIENTIFIC AGENT — KEY EXPERIMENT POINTS
+=======================================================
+Date: 2026-04-13
+Basis: 4 benchmark cases (step flux, noise=0.1/0.5 K), all variants run
+
+=== 5 MAIN FINDINGS ===
+
+1. FIXED LAMBDA COMPLETELY FAILS
+   fixed_solver (lambda=1.0) achieves 0% success rate across all 4 cases.
+   flux_rmse = ~23,280 W/m2 (vs ~6,000 W/m2 for auto-lambda methods).
+   replay_rmse = 2.30 K (fails the 2.0 K threshold in all cases).
+   The solution is heavily over-regularized and collapses to a near-constant.
+   Implication: automatic lambda selection is non-negotiable for IHCP.
+
+2. FULL AGENT ACHIEVES 100% WEAK_PASS vs 25% FOR SINGLE-SHOT METHODS
+   full_agent: 4/4 cases accepted (weak_pass).
+   auto_solver and solver_plus_verifier: 1/4 cases each (25%).
+   The gap is entirely driven by iterative replanning: the replanner detects
+   oscillatory under-regularized solutions and corrects them in 1-3 steps.
+
+3. REPLANNING MECHANISM WORKS AS DESIGNED
+   For low noise (0.1 K), the discrepancy principle picks lambda ~1e-9,
+   which is under-regularized. Replanner correctly fires switch_reg_order_to_2,
+   then increases lambda 5x per step until weak_pass is reached.
+   For medium noise (0.5 K), the discrepancy principle itself picks a good lambda
+   and no replanning is needed (1 iteration, replanning_count=0).
+
+4. VERIFIER CORRECTLY IDENTIFIES WEAK BUT PASSING SOLUTIONS
+   auto_solver's last_verifier_decision is weak_pass in all 4 cases,
+   even when the final_decision is fail (due to budget exhaustion mid-replan).
+   This confirms the verifier is functioning correctly: it identifies the solution
+   quality, and the replanner-budget interaction explains the discrepancy.
+
+5. LOW RECONSTRUCTION ERROR DOES NOT GUARANTEE FORMAL ACCEPTANCE
+   auto_solver achieves lower flux_rmse than full_agent in low-noise cases
+   (4,886 vs 6,292 W/m2 for case_0001) but is not formally accepted.
+   The full_agent trades a small amount of reconstruction accuracy for solution
+   smoothness, which is required for acceptance. This tradeoff is expected.
+
+
+=== 5 LIMITATIONS ===
+
+1. EXTREMELY LIMITED BENCHMARK COVERAGE
+   Only 4 of 30 planned cases have been run (13%).
+   All 4 are the "step" flux family only. No ramp, pulse, or sinusoidal cases tested.
+   Only noise=0.1 and 0.5 K tested; noise=1.0 K not yet run.
+   Statistical conclusions are not yet possible.
+
+2. NO ABLATION OR STRESS TEST RESULTS
+   ablation_v1 and stress_v1 configs exist but zero runs have been executed.
+   Cannot yet answer: which agent component contributes most?
+   Cannot yet answer: where does the agent break down (few sensors, high noise, etc.)?
+
+3. OSCILLATION SCORE IS IDENTICAL ACROSS ALL CASES (POSSIBLE BUG)
+   oscillation_score = 0.3865546218487395 for every single row in results_raw.csv,
+   regardless of variant, noise level, or solution quality.
+   For fixed_solver (near-flat solution), this score should be much lower.
+   The computation may be applied to the wrong array or have a logic issue.
+
+4. DUPLICATE ROWS IN results_raw.csv
+   case_0001 has 6 rows instead of 4: auto_solver and fixed_solver appear twice.
+   This biases the summary statistics (n=5 for some variants vs n=4 for others).
+   Needs to be cleaned before any final reporting.
+
+5. ONLY SYNTHETIC DATA, ONLY TIKHONOV, ONLY 1D
+   No real experimental data validation.
+   No comparison with Bayesian methods, PINN, or classical iterative IHCP solvers.
+   Only 1D homogeneous geometry with constant material properties.
+   The "scientific agent" framing is validated at the workflow level only.
+
+
+=== 5 NEXT-STEP ITEMS ===
+
+1. COMPLETE THE BENCHMARK RUN (IMMEDIATE PRIORITY)
+   Run the remaining 26 cases (ramp, pulse, sinusoid flux families; noise=1.0 K).
+   Command: python experiments/run_benchmark.py --config experiments/configs/benchmark_v1.yaml --variant all
+   Expected time: ~10-15 minutes for 26 cases x 4 variants = 104 additional runs.
+
+2. INVESTIGATE AND FIX OSCILLATION SCORE COMPUTATION
+   Read experiments/utils.py:compute_regularity_metrics() and verifier.py:_oscillation_score().
+   Check whether the score is being applied to estimated_x (params) or q_est_full (time series).
+   The two functions may compute different things and one of them is wrong.
+
+3. RUN ABLATION EXPERIMENTS
+   Command: python experiments/run_benchmark.py --config experiments/configs/ablation_v1.yaml --variant all
+   This will quantify the individual contribution of: verifier, replanner, physical bounds,
+   regularization order switching, and automatic lambda selection.
+
+4. RUN STRESS TESTS
+   Command: python experiments/run_benchmark.py --config experiments/configs/stress_v1.yaml --variant all
+   This requires first updating run_benchmark.py to handle the stress_v1 scenario format
+   (which has a different config structure than benchmark_v1).
+
+5. CALIBRATE VERIFIER THRESHOLDS BASED ON FULL BENCHMARK DATA
+   Current thresholds (rmse_pass=0.5 K, rmse_weak=2.0 K, osc_pass=0.20, etc.) are
+   heuristic. After running all 30 cases, use the distribution of replay_rmse and
+   roughness metrics to check whether thresholds are well-calibrated.

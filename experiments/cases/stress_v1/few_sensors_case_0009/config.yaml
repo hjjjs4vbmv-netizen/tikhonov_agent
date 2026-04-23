@@ -1,0 +1,26 @@
+boundary_conditions:
+  right_type: dirichlet
+  right_value: 300.0
+dimension: 1
+geometry:
+  length: 0.05
+  n_cells: 50
+initial_condition: 300.0
+material:
+  conductivity: 50.0
+  density: 7800.0
+  specific_heat: 500.0
+metadata:
+  flux_family: step
+  generated_by: experiments/generate_cases.py
+noise_std: 0.5
+observations_file: /root/claude-code/tikhonov_agent/experiments/cases/stress_v1/few_sensors_case_0009/observations.csv
+problem_type: 1D_transient_IHCP
+sensor_positions:
+- 0.03
+target_name: boundary_heat_flux
+time:
+  end: 60.0
+  n_steps: 121
+  start: 0.0
+transient: true

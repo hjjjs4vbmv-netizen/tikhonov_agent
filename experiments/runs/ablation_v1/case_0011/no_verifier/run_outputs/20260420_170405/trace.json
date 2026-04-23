@@ -1,0 +1,23 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 1.3609170326555636e-06,
+    "reg_order": 1,
+    "residual_norm": 15.332633246256396,
+    "solver_status": "success",
+    "verification_decision": "pass",
+    "replay_rmse": 0.9856189947158365,
+    "tradeoff": "well_regularized",
+    "replanning_action": "stop_success",
+    "reasons": [
+      "skip_verifier=True: verification bypassed (ablation)"
+    ],
+    "suggested": [],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied"
+    ]
+  }
+]

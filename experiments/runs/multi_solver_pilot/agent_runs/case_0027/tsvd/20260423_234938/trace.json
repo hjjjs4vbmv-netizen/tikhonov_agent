@@ -1,0 +1,83 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 0.01,
+    "reg_order": 1,
+    "residual_norm": 6.622809347355748,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.42573030909280746,
+    "tradeoff": "under_regularized",
+    "replanning_action": "switch_reg_order_to_2",
+    "reasons": [
+      "Under-regularisation suspected: osc=2.30, L1_rough=712773.2191",
+      "Fit marginal: rmse=0.4257, rel_err=0.0229"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides"
+    ]
+  },
+  {
+    "iteration": 1,
+    "lambda_used": 0.01,
+    "reg_order": 2,
+    "residual_norm": 6.622809347355748,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.42573030909280746,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=2.30, L1_rough=712773.2191",
+      "Fit marginal: rmse=0.4257, rel_err=0.0229"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2"
+    ]
+  },
+  {
+    "iteration": 2,
+    "lambda_used": 0.05,
+    "reg_order": 2,
+    "residual_norm": 6.92503776471808,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.44515828758227977,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_success_weak_pass",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.02, L1_rough=172925.0811",
+      "Fit marginal: rmse=0.4452, rel_err=0.0239"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2",
+      "iter1: lambda increased to 5.000e-02 (factor=5.0)"
+    ]
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "overall_pass": true,
+  "yaml_schema": {
+    "problem_type": "1D_transient_IHCP",
+    "rod_length_m": 0.05,
+    "n_cells": 60,
+    "density_kg_m3": 7800.0,
+    "specific_heat_J_kgK": 500.0,
+    "conductivity_W_mK": 50.0,
+    "initial_temperature_K": 300.0,
+    "bc_right_type": "dirichlet",
+    "bc_right_value": 300.0,
+    "time_start_s": 0.0,
+    "time_end_s": 60.0,
+    "time_n_steps": 121,
+    "sensor_positions_m": [
+      0.01,
+      0.03
+    ],
+    "noise_std_K": 0.3,
+    "observations_file": "/root/claude-code/tikhonov_agent/data/demo_temperature.csv",
+    "is_complete": true,
+    "missing_fields": []
+  },
+  "text_schema": {
+    "problem_type": "1D_transient_IHCP",
+    "rod_length_m": 0.05,
+    "n_cells": 60,
+    "density_kg_m3": 7800.0,
+    "specific_heat_J_kgK": 500.0,
+    "conductivity_W_mK": 50.0,
+    "initial_temperature_K": 300.0,
+    "bc_right_type": "dirichlet",
+    "bc_right_value": 300.0,
+    "time_start_s": 0.0,
+    "time_end_s": 60.0,
+    "time_n_steps": 121,
+    "sensor_positions_m": [
+      0.01,
+      0.03
+    ],
+    "noise_std_K": 0.3,
+    "observations_file": "/root/claude-code/tikhonov_agent/data/demo_temperature.csv",
+    "is_complete": true,
+    "missing_fields": []
+  },
+  "field_comparison": [
+    {
+      "field": "rod_length_m",
+      "yaml": 0.05,
+      "text": 0.05,
+      "match": true
+    },
+    {
+      "field": "density_kg_m3",
+      "yaml": 7800.0,
+      "text": 7800.0,
+      "match": true
+    },
+    {
+      "field": "specific_heat_J_kgK",
+      "yaml": 500.0,
+      "text": 500.0,
+      "match": true
+    },
+    {
+      "field": "conductivity_W_mK",
+      "yaml": 50.0,
+      "text": 50.0,
+      "match": true
+    },
+    {
+      "field": "initial_temperature_K",
+      "yaml": 300.0,
+      "text": 300.0,
+      "match": true
+    },
+    {
+      "field": "bc_right_value",
+      "yaml": 300.0,
+      "text": 300.0,
+      "match": true
+    },
+    {
+      "field": "time_end_s",
+      "yaml": 60.0,
+      "text": 60.0,
+      "match": true
+    },
+    {
+      "field": "time_n_steps",
+      "yaml": 121,
+      "text": 121,
+      "match": true
+    },
+    {
+      "field": "noise_std_K",
+      "yaml": 0.3,
+      "text": 0.3,
+      "match": true
+    }
+  ],
+  "sensor_positions_match": true
+}

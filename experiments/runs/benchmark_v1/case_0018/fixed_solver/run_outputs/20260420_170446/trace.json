@@ -1,0 +1,24 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 1.0,
+    "reg_order": 1,
+    "residual_norm": 26.652223295488774,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 1.7132698023580173,
+    "tradeoff": "well_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Discrepancy principle: ||r||=26.6522 is above target=15.5563 (rel_dev=0.71)",
+      "Fit marginal: rmse=1.7133, rel_err=0.0989"
+    ],
+    "suggested": [],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_value=1.0 supplied \u2192 strategy forced to 'fixed'"
+    ]
+  }
+]

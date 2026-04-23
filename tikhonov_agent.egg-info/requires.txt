@@ -1,0 +1,12 @@
+numpy>=1.26
+scipy>=1.12
+pyyaml>=6.0
+pandas>=2.1
+
+[dev]
+pytest>=8.0
+pytest-cov>=4.1
+
+[llm]
+transformers>=4.40
+torch>=2.2

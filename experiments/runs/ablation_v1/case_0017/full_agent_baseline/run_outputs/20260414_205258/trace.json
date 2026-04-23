@@ -1,0 +1,254 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 3.9035412063294687e-07,
+    "reg_order": 1,
+    "residual_norm": 15.626679289474401,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 1.0045209902740666,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.05, L1_rough=65866.2527",
+      "Fit marginal: rmse=1.0045, rel_err=0.0583"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied"
+    ]
+  },
+  {
+    "iteration": 1,
+    "lambda_used": 1.9517706031647343e-07,
+    "reg_order": 1,
+    "residual_norm": 14.548378844228042,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.9352052123658697,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.05, L1_rough=79742.4640",
+      "Fit marginal: rmse=0.9352, rel_err=0.0543"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 2,
+    "lambda_used": 9.758853015823672e-08,
+    "reg_order": 1,
+    "residual_norm": 14.062493927992218,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.9039713469889052,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.05, L1_rough=89255.3921",
+      "Fit marginal: rmse=0.9040, rel_err=0.0525"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 3,
+    "lambda_used": 4.879426507911836e-08,
+    "reg_order": 1,
+    "residual_norm": 13.881549692242157,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8923398109784059,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.05, L1_rough=94831.6210",
+      "Fit marginal: rmse=0.8923, rel_err=0.0518"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)",
+      "iter2: lambda decreased to 4.879e-08 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 4,
+    "lambda_used": 2.439713253955918e-08,
+    "reg_order": 1,
+    "residual_norm": 13.818164268224585,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8882652416010219,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.14, L1_rough=97765.4407",
+      "Fit marginal: rmse=0.8883, rel_err=0.0516"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)",
+      "iter2: lambda decreased to 4.879e-08 (factor=2.0)",
+      "iter3: lambda decreased to 2.440e-08 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 5,
+    "lambda_used": 1.219856626977959e-08,
+    "reg_order": 1,
+    "residual_norm": 13.791305333082475,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8865386838578939,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.14, L1_rough=99890.6447",
+      "Fit marginal: rmse=0.8865, rel_err=0.0515"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)",
+      "iter2: lambda decreased to 4.879e-08 (factor=2.0)",
+      "iter3: lambda decreased to 2.440e-08 (factor=2.0)",
+      "iter4: lambda decreased to 1.220e-08 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 6,
+    "lambda_used": 6.099283134889795e-09,
+    "reg_order": 1,
+    "residual_norm": 13.770656240515223,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8852113099142879,
+    "tradeoff": "under_regularized",
+    "replanning_action": "switch_reg_order_to_2",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.23, L1_rough=106784.8699",
+      "Fit marginal: rmse=0.8852, rel_err=0.0514"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)",
+      "iter2: lambda decreased to 4.879e-08 (factor=2.0)",
+      "iter3: lambda decreased to 2.440e-08 (factor=2.0)",
+      "iter4: lambda decreased to 1.220e-08 (factor=2.0)",
+      "iter5: lambda decreased to 6.099e-09 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 7,
+    "lambda_used": 6.099283134889795e-09,
+    "reg_order": 2,
+    "residual_norm": 13.780058828538426,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8858157311644617,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.14, L1_rough=104794.9331",
+      "Fit marginal: rmse=0.8858, rel_err=0.0514"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)",
+      "iter2: lambda decreased to 4.879e-08 (factor=2.0)",
+      "iter3: lambda decreased to 2.440e-08 (factor=2.0)",
+      "iter4: lambda decreased to 1.220e-08 (factor=2.0)",
+      "iter5: lambda decreased to 6.099e-09 (factor=2.0)",
+      "iter6: oscillatory solution \u2192 increase reg_order to 2"
+    ]
+  },
+  {
+    "iteration": 8,
+    "lambda_used": 3.0496415674448974e-09,
+    "reg_order": 2,
+    "residual_norm": 13.768295284287294,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8850595418998473,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_with_failure",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.23, L1_rough=108817.9923",
+      "Fit marginal: rmse=0.8851, rel_err=0.0514"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "physical_bounds=(-500000.0, 500000.0) applied",
+      "iter0: lambda decreased to 1.952e-07 (factor=2.0)",
+      "iter1: lambda decreased to 9.759e-08 (factor=2.0)",
+      "iter2: lambda decreased to 4.879e-08 (factor=2.0)",
+      "iter3: lambda decreased to 2.440e-08 (factor=2.0)",
+      "iter4: lambda decreased to 1.220e-08 (factor=2.0)",
+      "iter5: lambda decreased to 6.099e-09 (factor=2.0)",
+      "iter6: oscillatory solution \u2192 increase reg_order to 2",
+      "iter7: lambda decreased to 3.050e-09 (factor=2.0)"
+    ]
+  }
+]

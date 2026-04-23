@@ -1,0 +1,205 @@
+[
+  {
+    "iteration": 0,
+    "lambda_used": 0.01,
+    "reg_order": 1,
+    "residual_norm": 13.257405161429679,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8522182809622235,
+    "tradeoff": "under_regularized",
+    "replanning_action": "switch_reg_order_to_2",
+    "reasons": [
+      "Under-regularisation suspected: osc=6.94, L1_rough=1402581.9250",
+      "Fit marginal: rmse=0.8522, rel_err=0.0495"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides"
+    ]
+  },
+  {
+    "iteration": 1,
+    "lambda_used": 0.01,
+    "reg_order": 2,
+    "residual_norm": 13.257405161429679,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8522182809622235,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=6.94, L1_rough=1402581.9250",
+      "Fit marginal: rmse=0.8522, rel_err=0.0495"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2"
+    ]
+  },
+  {
+    "iteration": 2,
+    "lambda_used": 0.05,
+    "reg_order": 2,
+    "residual_norm": 13.787202333256552,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8862749330397013,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.01, L1_rough=117458.6669",
+      "Fit marginal: rmse=0.8863, rel_err=0.0515"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2",
+      "iter1: lambda increased to 5.000e-02 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 3,
+    "lambda_used": 0.025,
+    "reg_order": 2,
+    "residual_norm": 13.431100560964662,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8633838441324133,
+    "tradeoff": "under_regularized",
+    "replanning_action": "increase_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=3.87, L1_rough=1047801.2544",
+      "Fit marginal: rmse=0.8634, rel_err=0.0501"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2",
+      "iter1: lambda increased to 5.000e-02 (factor=5.0)",
+      "iter2: lambda decreased to 2.500e-02 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 4,
+    "lambda_used": 0.125,
+    "reg_order": 2,
+    "residual_norm": 13.799900739211285,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8870912174906842,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.00, L1_rough=104029.3230",
+      "Fit marginal: rmse=0.8871, rel_err=0.0515"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2",
+      "iter1: lambda increased to 5.000e-02 (factor=5.0)",
+      "iter2: lambda decreased to 2.500e-02 (factor=2.0)",
+      "iter3: lambda increased to 1.250e-01 (factor=5.0)"
+    ]
+  },
+  {
+    "iteration": 5,
+    "lambda_used": 0.0625,
+    "reg_order": 2,
+    "residual_norm": 13.78721025420011,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8862754422172364,
+    "tradeoff": "under_regularized",
+    "replanning_action": "decrease_lambda",
+    "reasons": [
+      "Under-regularisation suspected: osc=0.01, L1_rough=117137.3202",
+      "Fit marginal: rmse=0.8863, rel_err=0.0515"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2",
+      "iter1: lambda increased to 5.000e-02 (factor=5.0)",
+      "iter2: lambda decreased to 2.500e-02 (factor=2.0)",
+      "iter3: lambda increased to 1.250e-01 (factor=5.0)",
+      "iter4: lambda decreased to 6.250e-02 (factor=2.0)"
+    ]
+  },
+  {
+    "iteration": 6,
+    "lambda_used": 0.03125,
+    "reg_order": 2,
+    "residual_norm": 13.622395047452597,
+    "solver_status": "success",
+    "verification_decision": "weak_pass",
+    "replay_rmse": 0.8756807194596163,
+    "tradeoff": "under_regularized",
+    "replanning_action": "stop_with_failure",
+    "reasons": [
+      "Under-regularisation suspected: osc=1.02, L1_rough=488507.4805",
+      "Fit marginal: rmse=0.8757, rel_err=0.0509"
+    ],
+    "suggested": [
+      "increase_lambda"
+    ],
+    "notes": [
+      "num_parameters=24 (\u2248 N_t/5)",
+      "reg_order=1 (default first-difference smoothness)",
+      "noise_std provided \u2192 using discrepancy principle for lambda",
+      "lambda_strategy overridden to 'fixed' from config",
+      "lambda_value=0.01 supplied \u2192 strategy forced to 'fixed'",
+      "solver_name='tsvd' from config overrides",
+      "iter0: oscillatory solution \u2192 increase reg_order to 2",
+      "iter1: lambda increased to 5.000e-02 (factor=5.0)",
+      "iter2: lambda decreased to 2.500e-02 (factor=2.0)",
+      "iter3: lambda increased to 1.250e-01 (factor=5.0)",
+      "iter4: lambda decreased to 6.250e-02 (factor=2.0)",
+      "iter5: lambda decreased to 3.125e-02 (factor=2.0)"
+    ]
+  }
+]
