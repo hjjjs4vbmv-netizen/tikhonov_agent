@@ -1,0 +1,58 @@
+# clean_ihcp.yaml
+# Case A: Clean structured IHCP config with full nested schema.
+# This is the canonical form that Path A (StructuredInputParser) handles best.
+
+problem:
+  pde_family: parabolic
+  equation_class: heat_equation
+  problem_kind: inverse
+  dimension: 1
+  transient: true
+  unknown_target: boundary_heat_flux
+
+geometry:
+  length: 0.05         # [m]  5 cm rod
+  n_cells: 60
+
+material:
+  density: 7800.0      # [kg/m³]  steel
+  specific_heat: 500.0 # [J/(kg·K)]
+  conductivity: 50.0   # [W/(m·K)]
+
+initial_condition:
+  type: uniform
+  value: 300.0         # [K]
+
+boundary_conditions:
+  left:
+    type: neumann
+    status: inversion_target
+  right:
+    type: dirichlet
+    status: given
+    value: 300.0       # [K]
+
+time:
+  start: 0.0
+  end: 60.0            # [s]
+  n_steps: 121
+
+sensor_positions:
+  - 0.01
+  - 0.03
+
+observation:
+  noise_std: 0.3       # [K]
+  observations_file: data/demo_temperature.csv
+
+planner:
+  reg_order: 1
+  max_retries: 8
+  iteration_budget: 12
+  physical_bounds:
+    - -5.0e5
+    - 5.0e5
+
+metadata:
+  case_name: clean_ihcp_test
+  source: test_fixture

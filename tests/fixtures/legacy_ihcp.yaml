@@ -1,0 +1,52 @@
+# legacy_ihcp.yaml
+# Case B: Legacy-style structured config matching the existing
+# example_case.yaml / default.yaml format in the repository.
+# Path A must parse this format for backward compatibility.
+
+problem_type: "1D_transient_IHCP"
+dimension: 1
+transient: true
+target_name: "boundary_heat_flux"
+
+description: >
+  A steel rod (L=5 cm) is heated at the left face by an unknown time-varying
+  heat flux.  Two thermocouples are embedded at 1 cm and 3 cm.
+
+time:
+  start: 0.0
+  end:   60.0
+  n_steps: 121
+
+geometry:
+  length: 0.05
+  n_cells: 60
+
+material:
+  density: 7800.0
+  specific_heat: 500.0
+  conductivity: 50.0
+
+boundary_conditions:
+  right_type: "dirichlet"
+  right_value: 300.0
+
+sensor_positions:
+  - 0.01
+  - 0.03
+
+initial_condition: 300.0
+
+noise_std: 0.3
+
+observations_file: data/demo_temperature.csv
+
+planner:
+  reg_order: 1
+  max_retries: 8
+  iteration_budget: 12
+  physical_bounds:
+    - -5.0e5
+    - 5.0e5
+
+metadata:
+  case_name: legacy_ihcp_test

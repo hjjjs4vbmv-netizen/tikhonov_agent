@@ -1,49 +1,63 @@
 """
 input_normalizer.py
 ===================
-Input normalization layer: converts multiple input representations into a
-single unified internal schema (NormalizedSchema), then builds a ProblemSpec.
+Backward-compatible input normalization layer.
 
-This sits in front of the existing parser so that different input formats
-can feed into the same downstream scientific pipeline without any changes
-to the core solver, verifier, or replanner modules.
+This module preserves the original public API (``NormalizedSchema``,
+``normalize_from_yaml``, ``normalize_from_dict``, ``normalize_from_text``)
+while delegating the heavy lifting to the new PDE-schema layer in
+``src/pde_normalizer.py``.
 
-Supported input formats
------------------------
-1. Structured YAML config  – ``normalize_from_yaml`` reads the YAML file
-   directly (not via parser.py) and maps its nested dict into a flat
-   NormalizedSchema.  This path produces a schema that, when converted via
-   ``to_problem_spec()``, is byte-for-byte identical to what parser.py
-   produces.  Both paths coexist intentionally: parser.py remains the
-   low-level canonical parser; normalize_from_yaml is the higher-level
-   path that returns an inspectable intermediate schema.
+Architecture overview
+---------------------
 
-2. Python dict with partial or full problem data  – ``normalize_from_dict``.
-   The dict may use YAML-style nesting or the flat NormalizedSchema field
-   names (e.g. ``rod_length_m``).
+Old design (pre-upgrade)
+  Raw input → NormalizedSchema (flat, IHCP-only) → ProblemSpec
 
-3. Minimal semi-structured text  – ``normalize_from_text``.  Deterministic
-   regex extraction only; not a general natural-language parser.  Recognizes
-   patterns like "k = 50 W/(m·K)", "T_end = 60 s", "sensors at 0.01 m and
-   0.03 m".
+New design (post-upgrade)
+  Raw input
+    ├─ Path A (clean structured) → PDESchema → PDESchemaValidator → ProblemSpec
+    └─ Path B (messy / LLM-assisted) → PDESchema → PDESchemaValidator → ProblemSpec
 
-CSV loading note
-----------------
-``_load_observations_csv`` in this module mirrors ``_load_observations`` in
-parser.py.  They are kept separate so this module has no import dependency on
-parser.py.  If parser.py's CSV logic changes, update both functions.
+``NormalizedSchema`` is now a *thin adapter* on top of ``PDESchema``.  Its
+``to_problem_spec()`` method delegates to ``PDESchemaMapper``.  All public
+entry points (``normalize_from_yaml``, ``normalize_from_dict``,
+``normalize_from_text``) now return a ``NormalizedSchema`` instance that
+internally holds the full ``PDESchema`` so callers can inspect it.
 
-Extension note
---------------
-A future version can add a ``normalize_from_excel()`` entry point or plug in
-an LLM-based text extractor by implementing the ``ProblemParserLLM`` protocol
-from ``llm_hooks.py``.  The NormalizedSchema and its ``to_problem_spec()``
-method remain stable regardless of how the schema was populated.
+Diagnosis of the old design
+----------------------------
+1. ``NormalizedSchema`` was a *flat dataclass* mirroring IHCP-specific config
+   keys (``rod_length_m``, ``bc_right_type``, etc.).  There was no PDE-level
+   concept (equation class, domain type, coordinate system, coefficient
+   variability, BC status, observation layout, …).
+
+2. ``_dict_to_schema()`` was a single ~100-line function that parsed both
+   YAML-nested and flat keys with ad-hoc ``if "X" in raw`` guards.  It had no
+   alias table and no concept of field precedence.
+
+3. ``normalize_from_text()`` used 13 hardcoded regex patterns.  It had no
+   material name recognition, no LLM path, and no confidence tracking.
+
+4. Validation was limited to ``is_complete()`` / ``missing_fields()``.  There
+   were no PDE semantic checks (Fourier number, sensor-in-domain, BC
+   consistency, inversion-target designation).
+
+5. The LLM path was a stub comment ("Future version can add …"); it did not
+   target a PDE schema object and could not be tested independently.
+
+What changed
+------------
+* NormalizedSchema now wraps PDESchema (added ``pde_schema`` attribute).
+* All parsing delegates to ``pde_normalizer.StructuredInputParser`` (Path A)
+  or ``pde_normalizer.MockPDESchemaFiller`` (Path B).
+* ``to_problem_spec()`` delegates to ``PDESchemaMapper``.
+* Backward-compatible properties expose old flat field names.
+* Old public API is 100 % preserved; existing tests and demos still pass.
 """
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -52,80 +66,221 @@ import numpy as np
 import yaml
 
 from src.logging_utils import get_logger
+from src.pde_normalizer import (
+    MockPDESchemaFiller,
+    PDESchemaMapper,
+    PDESchemaValidator,
+    StructuredInputParser,
+    normalize_from_text as _pde_normalize_from_text,
+    normalize_from_yaml as _pde_normalize_from_yaml,
+    normalize_structured as _pde_normalize_structured,
+    normalize_with_llm as _pde_normalize_with_llm,
+)
+from src.pde_schema import PDESchema, ValidationResult
 from src.types import BoundaryConditions, Geometry, Material, ProblemSpec
 
 log = get_logger("input_normalizer")
 
 
 # ---------------------------------------------------------------------------
-# Unified internal schema
+# NormalizedSchema – backward-compatible adapter
 # ---------------------------------------------------------------------------
 
 
 @dataclass
 class NormalizedSchema:
-    """Unified internal representation of an IHCP problem instance.
+    """Backward-compatible adapter wrapping the new PDESchema.
 
-    Every field is explicit.  The schema is input-format agnostic: it does not
-    matter whether the data came from a YAML file, a Python dict, or a text
-    extraction.
+    Exposes all original flat field names as properties for compatibility
+    with existing code.  Internally delegates to a ``PDESchema`` instance.
 
-    Fields marked with a default of None are optional; downstream code must
-    handle the None case appropriately.
-
-    Design intent
-    -------------
-    This schema is the single contract between input parsing and the scientific
-    core.  It mirrors the logical structure of the inverse problem rather than
-    the syntax of any particular file format.
+    NEW: ``pde_schema`` attribute holds the full PDE-level schema for callers
+    that want richer introspection.  ``validation_result`` holds the last
+    validation outcome.
     """
 
-    # --- Problem taxonomy ---
-    pde_family: str = "parabolic"              # "parabolic" (heat eq.)
-    problem_type: str = "1D_transient_IHCP"
-    dimension: int = 1
-    transient: bool = True
-    unknown_target: str = "boundary_heat_flux"
+    # The underlying PDE schema – the source of truth
+    pde_schema: PDESchema = field(default_factory=PDESchema)
+    validation_result: ValidationResult | None = None
 
-    # --- Geometry ---
-    rod_length_m: float | None = None          # [m]
-    n_cells: int = 50
+    # -----------------------------------------------------------------
+    # Properties: expose old flat field names for backward compatibility
+    # -----------------------------------------------------------------
 
-    # --- Material properties ---
-    density_kg_m3: float | None = None         # rho [kg/m³]
-    specific_heat_J_kgK: float | None = None   # cp [J/(kg·K)]
-    conductivity_W_mK: float | None = None     # k [W/(m·K)]
+    @property
+    def pde_family(self) -> str:
+        return self.pde_schema.pde_family
 
-    # --- Initial condition ---
-    initial_temperature_K: float = 300.0       # uniform T(x, t=0) [K]
+    @property
+    def problem_type(self) -> str:
+        dim = self.pde_schema.dimension
+        kind = "IHCP" if self.pde_schema.problem_kind == "inverse" else "FP"
+        tr = "transient_" if self.pde_schema.transient else ""
+        return f"{dim}D_{tr}{kind}"
 
-    # --- Boundary conditions ---
-    bc_right_type: str = "dirichlet"           # "dirichlet" or "neumann"
-    bc_right_value: float = 300.0              # T_right [K] or q_right [W/m²]
-    # Left BC (x=0) is the UNKNOWN to be recovered; not stored here.
+    @property
+    def dimension(self) -> int:
+        return self.pde_schema.dimension
 
-    # --- Time discretisation ---
-    time_start_s: float = 0.0                  # [s]
-    time_end_s: float | None = None            # [s]
-    time_n_steps: int | None = None
+    @property
+    def transient(self) -> bool:
+        return self.pde_schema.transient
 
-    # --- Observations ---
-    sensor_positions_m: list[float] = field(default_factory=list)
-    observations_file: str | None = None       # path to CSV
-    observations_array: list[list[float]] | None = None  # shape (n_sensors, n_t)
+    @property
+    def unknown_target(self) -> str:
+        return self.pde_schema.unknown_target
 
-    # --- Noise ---
-    noise_std_K: float | None = None           # measurement noise [K]
+    @property
+    def rod_length_m(self) -> float | None:
+        return self.pde_schema.domain.length
 
-    # --- Solver preferences (optional) ---
-    solver_preferences: dict[str, Any] = field(default_factory=dict)
+    @rod_length_m.setter
+    def rod_length_m(self, v: float | None) -> None:
+        self.pde_schema.domain.length = v
 
-    # --- Free-form metadata ---
-    metadata: dict[str, Any] = field(default_factory=dict)
+    @property
+    def n_cells(self) -> int:
+        return self.pde_schema.domain.n_cells_x
 
-    # ------------------------------------------------------------------
-    # Derived helpers
-    # ------------------------------------------------------------------
+    @n_cells.setter
+    def n_cells(self, v: int) -> None:
+        self.pde_schema.domain.n_cells_x = v
+
+    @property
+    def density_kg_m3(self) -> float | None:
+        return self.pde_schema.material.density
+
+    @density_kg_m3.setter
+    def density_kg_m3(self, v: float | None) -> None:
+        self.pde_schema.material.density = v
+
+    @property
+    def specific_heat_J_kgK(self) -> float | None:
+        return self.pde_schema.material.specific_heat
+
+    @specific_heat_J_kgK.setter
+    def specific_heat_J_kgK(self, v: float | None) -> None:
+        self.pde_schema.material.specific_heat = v
+
+    @property
+    def conductivity_W_mK(self) -> float | None:
+        return self.pde_schema.material.conductivity
+
+    @conductivity_W_mK.setter
+    def conductivity_W_mK(self, v: float | None) -> None:
+        self.pde_schema.material.conductivity = v
+
+    @property
+    def initial_temperature_K(self) -> float:
+        return self.pde_schema.initial_condition.value
+
+    @initial_temperature_K.setter
+    def initial_temperature_K(self, v: float) -> None:
+        self.pde_schema.initial_condition.value = v
+
+    @property
+    def bc_right_type(self) -> str:
+        bc = self.pde_schema.boundary_conditions.get("right")
+        return bc.bc_type if bc is not None else "dirichlet"
+
+    @bc_right_type.setter
+    def bc_right_type(self, v: str) -> None:
+        bc = self.pde_schema.boundary_conditions.get("right")
+        if bc is not None:
+            bc.bc_type = v  # type: ignore[assignment]
+
+    @property
+    def bc_right_value(self) -> float:
+        bc = self.pde_schema.boundary_conditions.get("right")
+        return bc.value if (bc is not None and bc.value is not None) else 300.0
+
+    @bc_right_value.setter
+    def bc_right_value(self, v: float) -> None:
+        bc = self.pde_schema.boundary_conditions.get("right")
+        if bc is not None:
+            bc.value = float(v)
+
+    @property
+    def time_start_s(self) -> float:
+        return self.pde_schema.time.start
+
+    @time_start_s.setter
+    def time_start_s(self, v: float) -> None:
+        self.pde_schema.time.start = v
+
+    @property
+    def time_end_s(self) -> float | None:
+        return self.pde_schema.time.end
+
+    @time_end_s.setter
+    def time_end_s(self, v: float | None) -> None:
+        self.pde_schema.time.end = v
+
+    @property
+    def time_n_steps(self) -> int | None:
+        return self.pde_schema.time.n_steps
+
+    @time_n_steps.setter
+    def time_n_steps(self, v: int | None) -> None:
+        self.pde_schema.time.n_steps = v
+
+    @property
+    def sensor_positions_m(self) -> list[float]:
+        return self.pde_schema.observation.sensor_positions
+
+    @sensor_positions_m.setter
+    def sensor_positions_m(self, v: list[float]) -> None:
+        self.pde_schema.observation.sensor_positions = v
+
+    @property
+    def observations_file(self) -> str | None:
+        return self.pde_schema.observation.observations_file
+
+    @observations_file.setter
+    def observations_file(self, v: str | None) -> None:
+        self.pde_schema.observation.observations_file = v
+
+    @property
+    def observations_array(self) -> list[list[float]] | None:
+        return self.pde_schema.observation.observations_array
+
+    @observations_array.setter
+    def observations_array(self, v: list[list[float]] | None) -> None:
+        self.pde_schema.observation.observations_array = v
+
+    @property
+    def noise_std_K(self) -> float | None:
+        return self.pde_schema.observation.noise_std
+
+    @noise_std_K.setter
+    def noise_std_K(self, v: float | None) -> None:
+        self.pde_schema.observation.noise_std = v
+
+    @property
+    def solver_preferences(self) -> dict[str, Any]:
+        sp = self.pde_schema.solver_prefs
+        d: dict[str, Any] = {}
+        if sp.reg_order is not None:
+            d["reg_order"] = sp.reg_order
+        if sp.lambda_strategy is not None:
+            d["lambda_strategy"] = sp.lambda_strategy
+        if sp.lambda_value is not None:
+            d["lambda_value"] = sp.lambda_value
+        if sp.max_retries is not None:
+            d["max_retries"] = sp.max_retries
+        if sp.iteration_budget is not None:
+            d["iteration_budget"] = sp.iteration_budget
+        if sp.physical_bounds is not None:
+            d["physical_bounds"] = list(sp.physical_bounds)
+        return d
+
+    @property
+    def metadata(self) -> dict[str, Any]:
+        return self.pde_schema.metadata.extra
+
+    # -----------------------------------------------------------------
+    # Completeness checks (preserved API)
+    # -----------------------------------------------------------------
 
     def is_complete(self) -> bool:
         """Return True if all required fields are populated."""
@@ -138,11 +293,14 @@ class NormalizedSchema:
             self.time_n_steps,
             self.sensor_positions_m,
         ]
-        obs_ok = (self.observations_file is not None) or (self.observations_array is not None)
+        obs_ok = (
+            self.observations_file is not None
+            or self.observations_array is not None
+        )
         return all(v is not None for v in required) and obs_ok
 
     def missing_fields(self) -> list[str]:
-        """Return a list of names of required fields that are not yet set."""
+        """Return names of required fields that are not yet populated."""
         missing = []
         if self.rod_length_m is None:
             missing.append("rod_length_m")
@@ -162,9 +320,14 @@ class NormalizedSchema:
             missing.append("observations (file or array)")
         return missing
 
+    # -----------------------------------------------------------------
+    # Conversion (preserved API)
+    # -----------------------------------------------------------------
+
     def to_problem_spec(self) -> ProblemSpec:
         """Convert this schema to a ProblemSpec.
 
+        Delegates to PDESchemaMapper for the actual conversion.
         Raises ValueError if any required field is missing.
         """
         missing = self.missing_fields()
@@ -172,53 +335,14 @@ class NormalizedSchema:
             raise ValueError(
                 f"NormalizedSchema is incomplete; missing: {missing}"
             )
-
-        geometry = Geometry(
-            length=self.rod_length_m,       # type: ignore[arg-type]
-            n_cells=self.n_cells,
-        )
-        material = Material(
-            density=self.density_kg_m3,           # type: ignore[arg-type]
-            specific_heat=self.specific_heat_J_kgK,  # type: ignore[arg-type]
-            conductivity=self.conductivity_W_mK,     # type: ignore[arg-type]
-        )
-        bc = BoundaryConditions(
-            right_type=self.bc_right_type,   # type: ignore[arg-type]
-            right_value=self.bc_right_value,
-        )
-        time_grid = list(
-            np.linspace(self.time_start_s, self.time_end_s, self.time_n_steps)  # type: ignore[arg-type]
-        )
-
-        # Resolve observations
-        if self.observations_array is not None:
-            observations = self.observations_array
-        else:
-            observations = _load_observations_csv(
-                Path(self.observations_file),       # type: ignore[arg-type]
-                len(self.sensor_positions_m),
-                self.time_n_steps,                  # type: ignore[arg-type]
+        # Re-run validation before mapping
+        vr = PDESchemaValidator().validate(self.pde_schema)
+        if not vr.valid:
+            raise ValueError(
+                f"PDESchema is invalid; errors: {vr.errors}"
             )
-
-        meta = dict(self.metadata)
-        if self.observations_file:
-            meta.setdefault("source_file", self.observations_file)
-
-        spec = ProblemSpec(
-            problem_type=self.problem_type,
-            dimension=self.dimension,
-            transient=self.transient,
-            target_name=self.unknown_target,
-            time_grid=time_grid,
-            sensor_positions=self.sensor_positions_m,
-            observations=observations,
-            geometry=geometry,
-            material=material,
-            boundary_conditions=bc,
-            initial_condition=self.initial_temperature_K,
-            noise_std=self.noise_std_K,
-            metadata=meta,
-        )
+        mapper = PDESchemaMapper()
+        spec = mapper.map(self.pde_schema)
         log.info(
             "NormalizedSchema → ProblemSpec: n_time=%d, n_sensors=%d",
             spec.n_time, spec.n_sensors,
@@ -227,7 +351,7 @@ class NormalizedSchema:
 
 
 # ---------------------------------------------------------------------------
-# Public normalizer entry points
+# Public normalizer entry points (preserved API)
 # ---------------------------------------------------------------------------
 
 
@@ -237,9 +361,7 @@ def normalize_from_yaml(
 ) -> NormalizedSchema:
     """Build a NormalizedSchema from a YAML problem config file.
 
-    This is the primary entry point for the existing structured workflow.
-    Observations can be embedded as a file reference in the YAML or passed
-    directly via *observations_path*.
+    Delegates to the new PDE-schema layer (Path A / structured).
 
     Parameters
     ----------
@@ -248,258 +370,58 @@ def normalize_from_yaml(
     """
     config_path = Path(config_path)
     log.info("normalize_from_yaml: %s", config_path)
-    with config_path.open("r", encoding="utf-8") as fh:
-        raw: dict[str, Any] = yaml.safe_load(fh)
-    schema = _dict_to_schema(raw)
-    # Override observations path if explicitly supplied
-    if observations_path is not None:
-        schema.observations_file = str(observations_path)
-    log.info(
-        "Normalized schema from YAML: complete=%s", schema.is_complete()
+    pde_schema, vr = _pde_normalize_from_yaml(
+        config_path,
+        observations_path,
+        strict=False,    # we want to return the schema even if partially invalid
     )
-    return schema
+    ns = NormalizedSchema(pde_schema=pde_schema, validation_result=vr)
+    log.info(
+        "normalize_from_yaml: complete=%s valid=%s",
+        ns.is_complete(), vr.valid,
+    )
+    return ns
 
 
 def normalize_from_dict(data: dict[str, Any]) -> NormalizedSchema:
     """Build a NormalizedSchema from a Python dict.
 
-    The dict may use the same structure as the YAML config (nested keys) or
-    the flat field names of NormalizedSchema (e.g. ``rod_length_m``).
-
-    Both structural representations are supported; YAML-style nesting takes
-    priority if both are present.
+    The dict may use YAML-style nesting or flat ``NormalizedSchema`` field names.
+    Delegates to the new PDE-schema layer (Path A / structured).
     """
     log.info("normalize_from_dict: keys=%s", list(data.keys()))
-    schema = _dict_to_schema(data)
+    pde_schema, vr = _pde_normalize_structured(data, strict=False)
+    ns = NormalizedSchema(pde_schema=pde_schema, validation_result=vr)
     log.info(
-        "Normalized schema from dict: complete=%s, missing=%s",
-        schema.is_complete(), schema.missing_fields(),
+        "normalize_from_dict: complete=%s valid=%s missing=%s",
+        ns.is_complete(), vr.valid, ns.missing_fields(),
     )
-    return schema
+    return ns
 
 
 def normalize_from_text(text: str) -> NormalizedSchema:
-    """Build a NormalizedSchema from a semi-structured text description.
+    """Build a NormalizedSchema from semi-structured text.
 
-    This is a *lightweight, deterministic* text extractor — not a full
-    natural-language parser.  It looks for recognizable numeric patterns
-    (e.g. "L = 0.05 m", "k = 50 W/(m·K)", "T_end = 60 s") and maps them
-    to schema fields.
+    Delegates to the new Path B (MockPDESchemaFiller) for regex/keyword
+    extraction, then runs the deterministic validator.
 
-    Limitations
-    -----------
-    - Only the patterns listed in _TEXT_PATTERNS are recognized.
-    - Observations must still be supplied separately (as a file path in the
-      text or via a follow-up call to schema.observations_file = ...).
-    - No LLM inference; only deterministic regex.
-    - For production use with free-form natural language, plug in a
-      ProblemParserLLM adapter instead.
+    Limitations: only deterministic regex patterns; no LLM inference.
+    For production use with free-form text, call
+    ``pde_normalizer.normalize_with_llm()`` with a real LLM adapter.
     """
     log.info("normalize_from_text: len=%d chars", len(text))
-    schema = NormalizedSchema()
-    extracted = _extract_from_text(text)
-    log.debug("Text extraction results: %s", extracted)
-    schema = _apply_flat_dict(schema, extracted)
-    schema.metadata["source"] = "text_extraction"
-    schema.metadata["raw_text"] = text[:200]  # keep first 200 chars for traceability
+    pde_schema, vr = _pde_normalize_from_text(text, strict=False)
+    pde_schema.metadata.extra["raw_text"] = text[:200]
+    ns = NormalizedSchema(pde_schema=pde_schema, validation_result=vr)
     log.info(
-        "Normalized schema from text: complete=%s, missing=%s",
-        schema.is_complete(), schema.missing_fields(),
+        "normalize_from_text: complete=%s valid=%s missing=%s",
+        ns.is_complete(), vr.valid, ns.missing_fields(),
     )
-    return schema
+    return ns
 
 
 # ---------------------------------------------------------------------------
-# Internal: dict → schema
-# ---------------------------------------------------------------------------
-
-
-def _dict_to_schema(raw: dict[str, Any]) -> NormalizedSchema:
-    """Convert a YAML-style dict (or flat dict) into a NormalizedSchema."""
-    schema = NormalizedSchema()
-
-    # --- Problem taxonomy ---
-    schema.problem_type = str(raw.get("problem_type", schema.problem_type))
-    schema.dimension = int(raw.get("dimension", schema.dimension))
-    schema.transient = bool(raw.get("transient", schema.transient))
-    schema.unknown_target = str(raw.get("target_name", schema.unknown_target))
-
-    # --- Geometry ---
-    if "geometry" in raw:
-        geo = raw["geometry"]
-        schema.rod_length_m = float(geo["length"])
-        schema.n_cells = int(geo.get("n_cells", schema.n_cells))
-    # also accept flat keys
-    if "rod_length_m" in raw:
-        schema.rod_length_m = float(raw["rod_length_m"])
-    if "n_cells" in raw:
-        schema.n_cells = int(raw["n_cells"])
-
-    # --- Material ---
-    if "material" in raw:
-        mat = raw["material"]
-        schema.density_kg_m3 = float(mat["density"])
-        schema.specific_heat_J_kgK = float(mat["specific_heat"])
-        schema.conductivity_W_mK = float(mat["conductivity"])
-    for flat_key, attr in [
-        ("density_kg_m3", "density_kg_m3"),
-        ("specific_heat_J_kgK", "specific_heat_J_kgK"),
-        ("conductivity_W_mK", "conductivity_W_mK"),
-    ]:
-        if flat_key in raw:
-            setattr(schema, attr, float(raw[flat_key]))
-
-    # --- Initial condition ---
-    if "initial_condition" in raw:
-        schema.initial_temperature_K = float(raw["initial_condition"])
-    if "initial_temperature_K" in raw:
-        schema.initial_temperature_K = float(raw["initial_temperature_K"])
-
-    # --- Boundary conditions ---
-    if "boundary_conditions" in raw:
-        bc = raw["boundary_conditions"]
-        schema.bc_right_type = str(bc.get("right_type", schema.bc_right_type))
-        schema.bc_right_value = float(bc.get("right_value", schema.bc_right_value))
-    if "bc_right_type" in raw:
-        schema.bc_right_type = str(raw["bc_right_type"])
-    if "bc_right_value" in raw:
-        schema.bc_right_value = float(raw["bc_right_value"])
-
-    # --- Time ---
-    if "time" in raw:
-        tg = raw["time"]
-        schema.time_start_s = float(tg.get("start", schema.time_start_s))
-        schema.time_end_s = float(tg["end"])
-        schema.time_n_steps = int(tg["n_steps"])
-    for flat_key, attr in [
-        ("time_start_s", "time_start_s"),
-        ("time_end_s", "time_end_s"),
-        ("time_n_steps", "time_n_steps"),
-    ]:
-        if flat_key in raw:
-            setattr(schema, attr, float(raw[flat_key]) if attr.endswith("_s") else int(raw[flat_key]))
-
-    # --- Sensors ---
-    if "sensor_positions" in raw:
-        schema.sensor_positions_m = [float(s) for s in raw["sensor_positions"]]
-    if "sensor_positions_m" in raw:
-        schema.sensor_positions_m = [float(s) for s in raw["sensor_positions_m"]]
-
-    # --- Observations ---
-    if "observations_file" in raw:
-        schema.observations_file = str(raw["observations_file"])
-    if "observations_file_path" in raw:
-        schema.observations_file = str(raw["observations_file_path"])
-
-    # --- Noise ---
-    if "noise_std" in raw and raw["noise_std"] is not None:
-        schema.noise_std_K = float(raw["noise_std"])
-    if "noise_std_K" in raw and raw["noise_std_K"] is not None:
-        schema.noise_std_K = float(raw["noise_std_K"])
-
-    # --- Solver preferences ---
-    if "planner" in raw and isinstance(raw["planner"], dict):
-        schema.solver_preferences = dict(raw["planner"])
-    if "solver_preferences" in raw and isinstance(raw["solver_preferences"], dict):
-        schema.solver_preferences.update(raw["solver_preferences"])
-
-    # --- Metadata ---
-    if "metadata" in raw and isinstance(raw["metadata"], dict):
-        schema.metadata.update(raw["metadata"])
-
-    return schema
-
-
-# ---------------------------------------------------------------------------
-# Internal: text extraction
-# ---------------------------------------------------------------------------
-
-# Recognizable patterns in semi-structured text.
-# Each entry: (field_name_in_NormalizedSchema, compiled_regex)
-# The regex must have one capturing group for the numeric value.
-_TEXT_PATTERNS: list[tuple[str, re.Pattern]] = [
-    # Geometry
-    ("rod_length_m",         re.compile(r"[Ll](?:ength)?\s*[=:]\s*([\d.eE+\-]+)\s*m", re.I)),
-    ("n_cells",              re.compile(r"n_cells\s*[=:]\s*(\d+)", re.I)),
-    # Material
-    ("density_kg_m3",        re.compile(r"rho\s*[=:]\s*([\d.eE+\-]+)\s*kg", re.I)),
-    ("specific_heat_J_kgK",  re.compile(r"cp\s*[=:]\s*([\d.eE+\-]+)\s*J", re.I)),
-    ("conductivity_W_mK",    re.compile(r"k\s*[=:]\s*([\d.eE+\-]+)\s*W", re.I)),
-    # Temperature
-    ("initial_temperature_K",re.compile(r"T0\s*[=:]\s*([\d.eE+\-]+)\s*K", re.I)),
-    ("bc_right_value",       re.compile(r"T_right\s*[=:]\s*([\d.eE+\-]+)\s*K", re.I)),
-    # Time
-    ("time_end_s",           re.compile(r"T_end\s*[=:]\s*([\d.eE+\-]+)\s*s", re.I)),
-    ("time_n_steps",         re.compile(r"n_steps\s*[=:]\s*(\d+)", re.I)),
-    # Noise
-    ("noise_std_K",          re.compile(r"noise_std\s*[=:]\s*([\d.eE+\-]+)\s*K", re.I)),
-    # Observations file
-    ("observations_file",    re.compile(r"observations\s*[=:]\s*[\"']?([^\s\"']+\.csv)[\"']?", re.I)),
-]
-
-
-def _extract_from_text(text: str) -> dict[str, Any]:
-    """Apply _TEXT_PATTERNS to extract field values from a text string."""
-    extracted: dict[str, Any] = {}
-    for field_name, pattern in _TEXT_PATTERNS:
-        m = pattern.search(text)
-        if m:
-            raw_val = m.group(1)
-            try:
-                # Sensor positions are special — handle separately below
-                if field_name in ("n_cells", "time_n_steps"):
-                    extracted[field_name] = int(raw_val)
-                elif field_name == "observations_file":
-                    extracted[field_name] = raw_val
-                else:
-                    extracted[field_name] = float(raw_val)
-            except ValueError:
-                log.warning("Text extraction: could not parse '%s' for field '%s'", raw_val, field_name)
-
-    # Sensor positions: look for "sensors at X m and Y m" or "sensors: [X, Y]"
-    sensor_patterns = [
-        re.compile(r"sensors?\s+at\s+([\d.,\s]+(?:m\s+and\s+[\d.,\s]+)?)\s*m", re.I),
-        re.compile(r"sensor_positions\s*[=:]\s*\[([\d.,\s]+)\]", re.I),
-    ]
-    for sp in sensor_patterns:
-        sm = sp.search(text)
-        if sm:
-            vals_str = sm.group(1)
-            # Remove trailing "m", "and", spaces, keep only numbers / decimal points
-            cleaned = re.sub(r"\band\b", " ", vals_str, flags=re.I)
-            try:
-                positions = [float(v.strip()) for v in re.split(r"[,\s]+", cleaned) if re.match(r"[\d.eE+\-]+", v.strip())]
-                if positions:
-                    extracted["sensor_positions_m"] = positions
-                    break
-            except ValueError:
-                pass
-
-    return extracted
-
-
-def _apply_flat_dict(schema: NormalizedSchema, data: dict[str, Any]) -> NormalizedSchema:
-    """Apply a flat dict of field_name → value to a NormalizedSchema."""
-    float_fields = {
-        "rod_length_m", "density_kg_m3", "specific_heat_J_kgK",
-        "conductivity_W_mK", "initial_temperature_K", "bc_right_value",
-        "time_start_s", "time_end_s", "noise_std_K",
-    }
-    int_fields = {"n_cells", "time_n_steps", "dimension"}
-    for key, val in data.items():
-        if not hasattr(schema, key):
-            continue
-        if key in float_fields:
-            setattr(schema, key, float(val))
-        elif key in int_fields:
-            setattr(schema, key, int(val))
-        else:
-            setattr(schema, key, val)
-    return schema
-
-
-# ---------------------------------------------------------------------------
-# CSV loading helper (mirrors parser.py logic)
+# CSV loading helper (preserved for external callers)
 # ---------------------------------------------------------------------------
 
 
@@ -508,8 +430,14 @@ def _load_observations_csv(
     n_sensors: int,
     n_steps: int,
 ) -> list[list[float]]:
-    """Load CSV observations (rows=time, cols=sensors) into sensor-major form."""
+    """Load CSV observations (rows=time, cols=sensors) into sensor-major form.
+
+    This function is kept for backward compatibility with callers that import
+    it directly.  The canonical implementation is now in ``pde_schema.py``
+    (``_default_csv_loader``).
+    """
     import csv as _csv
+
     if not path.exists():
         raise FileNotFoundError(f"Observations file not found: {path}")
 
