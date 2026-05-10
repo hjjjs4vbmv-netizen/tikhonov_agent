@@ -7,7 +7,7 @@ Provides a minimal protocol-based abstraction so that:
   - The agent loop calls ``registry.solve_single(name, G, y, config, lam)``
     without importing solver modules directly.
   - New solvers are added by registering a module — no changes to agent.py.
-  - Both Tikhonov and TSVD (and future solvers) share the same interface.
+  - Tikhonov, TSVD, DeepXDE, and future solvers share the same interface.
 
 Solver interface (informal protocol)
 -------------------------------------
@@ -31,6 +31,7 @@ Currently registered solvers
 ------------------------------
   "tikhonov" : Tikhonov normal-equation solver (src/tikhonov_solver.py)
   "tsvd"     : Truncated SVD solver           (src/tsvd_solver.py)
+  "deepxde"  : DeepXDE/PyTorch optimizer solver (src/deepxde_solver.py)
 
 Usage in the agent
 ------------------
@@ -60,11 +61,17 @@ class SolverRegistry:
 
         Parameters
         ----------
-        name   : short identifier, e.g. "tikhonov" or "tsvd"
-        module : any object with ``solve_single`` and ``solve_grid`` callables
+        name
+            Short identifier, e.g. ``"tikhonov"``, ``"tsvd"``, or
+            ``"deepxde"``.
+        module
+            Any object exposing callable ``solve_single`` and ``solve_grid``
+            functions.
         """
-        if not (callable(getattr(module, "solve_single", None)) and
-                callable(getattr(module, "solve_grid", None))):
+        if not (
+            callable(getattr(module, "solve_single", None))
+            and callable(getattr(module, "solve_grid", None))
+        ):
             raise TypeError(
                 f"Solver module '{name}' must expose solve_single() and solve_grid()"
             )
@@ -115,13 +122,15 @@ class SolverRegistry:
 
 
 def _build_default_registry() -> SolverRegistry:
-    """Build the default registry with Tikhonov and TSVD registered."""
+    """Build the default registry with all bundled solvers registered."""
     import src.tikhonov_solver as _tikhonov
     import src.tsvd_solver as _tsvd
+    import src.deepxde_solver as _deepxde
 
     reg = SolverRegistry()
     reg.register("tikhonov", _tikhonov)
     reg.register("tsvd", _tsvd)
+    reg.register("deepxde", _deepxde)
     return reg
 
 

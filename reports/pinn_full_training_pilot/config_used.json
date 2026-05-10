@@ -1,0 +1,54 @@
+{
+  "n_adam": 10000,
+  "lr_adam": 0.001,
+  "n_lbfgs": 500,
+  "hidden_layers": [
+    64,
+    64,
+    64,
+    64
+  ],
+  "n_pde_pts": 1200,
+  "n_bc_pts": 150,
+  "n_ic_pts": 300,
+  "w_pde": 1.0,
+  "w_ic": 20.0,
+  "w_bc_flux": 10.0,
+  "w_bc_ins": 2.0,
+  "w_data": 100.0,
+  "ny_q": 8,
+  "nt_q": 10,
+  "sigma_noise": 0.1,
+  "sensor_config": "medium",
+  "obs_every": 8,
+  "cases": [
+    {
+      "case_name": "gaussian_localized_medium",
+      "case_label": "A",
+      "family_name": "gaussian_localized",
+      "primary_axis_level": 1,
+      "sigma_noise": 0.1,
+      "sensor_config": "medium",
+      "seed": 0
+    },
+    {
+      "case_name": "overlapping_multi_spot_medium",
+      "case_label": "B",
+      "family_name": "overlapping_multi_spot",
+      "primary_axis_level": 1,
+      "sigma_noise": 0.1,
+      "sensor_config": "medium",
+      "seed": 0
+    }
+  ],
+  "env": {
+    "python": "3.12.3",
+    "pytorch": "2.10.0+cu128",
+    "cuda_available": true,
+    "cuda_version": "12.8",
+    "gpu_name": "NVIDIA GeForce RTX 5090",
+    "gpu_memory_gb": 33.7,
+    "deepxde": "1.15.0",
+    "dde_backend": "pytorch"
+  }
+}

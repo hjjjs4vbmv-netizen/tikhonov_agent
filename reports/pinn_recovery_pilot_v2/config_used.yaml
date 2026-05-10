@@ -1,0 +1,25 @@
+hidden_layers:
+- 64
+- 64
+- 64
+- 64
+lr_adam: 0.001
+n_adam: 20000
+n_bc_pts: 120
+n_ic_pts: 200
+n_lbfgs: 400
+n_modes_t: 8
+n_modes_y: 8
+n_pde_pts: 900
+nt_q: 10
+ny_q: 8
+seed: 0
+sigma_noise: 0.1
+use_fourier_basis: true
+use_normalized_loss: true
+use_warm_start: true
+w_bc_flux: 500.0
+w_bc_ins: 2.0
+w_data: 100.0
+w_ic: 20.0
+w_pde: 1.0

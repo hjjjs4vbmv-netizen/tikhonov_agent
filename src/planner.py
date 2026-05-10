@@ -147,6 +147,19 @@ def make_initial_plan(
         solver_name=solver_name,
     )
 
+    # --- 9. Solver-specific config pass-through ---
+    # Keys not modelled as InversionConfig fields (e.g. deepxde_*) are
+    # forwarded as dynamic attributes so solver modules can read them via
+    # getattr(config, key, default) without requiring schema changes.
+    _SOLVER_PASSTHROUGH_KEYS = {
+        "deepxde_iterations", "deepxde_lr", "deepxde_optimizer",
+        "deepxde_device", "deepxde_init", "deepxde_adam_iterations",
+    }
+    for key in _SOLVER_PASSTHROUGH_KEYS:
+        if key in overrides:
+            setattr(config, key, overrides[key])
+            notes.append(f"{key}={overrides[key]} (deepxde config passthrough)")
+
     log_decision(log, "PLANNER", {
         "n_params": n_params,
         "reg_order": reg_order,

@@ -1,0 +1,3 @@
+case_label,case_name,family_name,primary_axis_level,sigma_noise,sensor_config,seed,flux_rmse,replay_rmse,ssim_flux,support_overlap,runtime_seconds,adam_final_loss,lbfgs_final_loss,n_adam_iters,n_lbfgs_closures
+A,gaussian_localized_medium,gaussian_localized,1,0.1,medium,0,272.39327668583763,0.08215166391616069,0.0006582740187905866,0.0,431.75412687379867,1.9635563407143262,0.7452667713188,10000,508
+B,overlapping_multi_spot_medium,overlapping_multi_spot,1,0.1,medium,0,339.827434212901,0.08131398693595138,0.0010968922138952818,0.0,420.5686259716749,2.0908090483562134,0.7575919308383934,10000,503

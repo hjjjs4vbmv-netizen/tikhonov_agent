@@ -1,0 +1,92 @@
+[     0.0s] 
+======================================================================
+[     0.0s] CASE 2: case2_multi_spot_boundary_biased
+[     0.0s]   family=overlapping_multi_spot  level=1  sigma=0.1K  layout=boundary_biased  seed=0
+[     0.0s]   Recovery: fourier=True  warm_start=True  normalized=True
+[     0.0s]   Weights: w_pde=1.0  w_ic=20.0  w_bc_flux=500.0  w_data=100.0
+[     0.0s]   Training: Adam 20000×  lr=0.001  L-BFGS 400×
+[     0.0s]   Device: cuda  dtype: torch.float64
+[     0.0s] ======================================================================
+[     0.0s] Boundary-biased layout: 9 sensors, x in [0.10, 1.00] cm
+[     0.0s] q_true: shape=(8, 10)  range=[0.0, 1188.6] W/m²
+[     0.0s] Sensors: 9  obs_steps: 23  noise σ=0.1 K
+[     0.0s] Running Tikhonov warm start...
+[     0.3s] Tikhonov warm start: flux_rmse=204.20 W/m²  t=0.32s
+[     0.3s] Tikhonov warm start flux range: [-121.1, 766.3] W/m²  RMSE vs truth: 204.20
+[     0.3s] Net: [64, 64, 64, 64] → 12801 params  |  q: Fourier 8×8=64 modes
+[     0.3s] Fourier warm start fit RMSE vs Tikhonov: 1.93 W/m²
+[     0.3s] Warm start applied from Tikhonov
+[     0.3s] Computing initial loss scales for normalization...
+[     0.4s] Initial scales: pde=9.276e-07  bc_flux=1.091e+05  data=2.546e+01  ic=7.306e-03
+[     0.4s] 
+--- Stage 1: Adam (20000 iters, lr=0.001) ---
+[     0.4s]   Adam      0/20000  total=6.2300e+02  pde=1.000e+00  data=1.000e+02  bc_flux=5.000e+02  q_range=[-123.9, 768.4] W/m²
+[    16.1s]   Adam    500/20000  total=2.5953e+02  pde=8.143e+00  data=3.139e+01  bc_flux=2.132e+02  q_range=[-123.7, 768.3] W/m²
+[    31.8s]   Adam   1000/20000  total=1.9471e+02  pde=1.317e+01  data=3.104e+01  bc_flux=1.425e+02  q_range=[-123.4, 768.2] W/m²
+[    47.6s]   Adam   1500/20000  total=1.3557e+02  pde=1.601e+01  data=3.163e+01  bc_flux=7.702e+01  q_range=[-123.2, 768.2] W/m²
+[    63.8s]   Adam   2000/20000  total=8.0756e+01  pde=1.476e+01  data=3.244e+01  bc_flux=2.312e+01  q_range=[-123.1, 768.2] W/m²
+[    79.1s]   Adam   2500/20000  total=6.4018e+01  pde=9.938e+00  data=3.218e+01  bc_flux=1.647e+01  q_range=[-123.1, 768.2] W/m²
+[    94.8s]   Adam   3000/20000  total=6.8694e+01  pde=1.673e+01  data=3.113e+01  bc_flux=1.073e+01  q_range=[-123.2, 768.2] W/m²
+[   110.7s]   Adam   3500/20000  total=5.6145e+01  pde=1.145e+01  data=3.033e+01  bc_flux=9.996e+00  q_range=[-123.3, 768.1] W/m²
+[   126.0s]   Adam   4000/20000  total=4.7777e+01  pde=7.587e+00  data=2.968e+01  bc_flux=8.385e+00  q_range=[-123.4, 768.1] W/m²
+[   141.8s]   Adam   4500/20000  total=4.8414e+01  pde=1.045e+01  data=2.893e+01  bc_flux=6.967e+00  q_range=[-123.5, 768.2] W/m²
+[   157.0s]   Adam   5000/20000  total=4.0460e+01  pde=5.232e+00  data=2.796e+01  bc_flux=5.513e+00  q_range=[-123.5, 768.2] W/m²
+[   173.6s]   Adam   5500/20000  total=7.0532e+01  pde=2.064e+01  data=2.706e+01  bc_flux=5.960e+00  q_range=[-123.6, 768.3] W/m²
+[   189.0s]   Adam   6000/20000  total=4.7653e+01  pde=1.617e+01  data=2.588e+01  bc_flux=3.720e+00  q_range=[-123.6, 768.3] W/m²
+[   204.4s]   Adam   6500/20000  total=3.5784e+01  pde=6.773e+00  data=2.449e+01  bc_flux=3.484e+00  q_range=[-123.7, 768.4] W/m²
+[   222.9s]   Adam   7000/20000  total=5.0631e+01  pde=1.861e+01  data=2.290e+01  bc_flux=3.081e+00  q_range=[-123.9, 768.5] W/m²
+[   244.7s]   Adam   7500/20000  total=2.6807e+01  pde=2.343e+00  data=2.101e+01  bc_flux=2.630e+00  q_range=[-124.0, 768.7] W/m²
+[   265.2s]   Adam   8000/20000  total=2.6037e+01  pde=4.199e+00  data=1.885e+01  bc_flux=2.196e+00  q_range=[-124.3, 768.9] W/m²
+[   279.6s]   Adam   8500/20000  total=2.3803e+01  pde=4.092e+00  data=1.676e+01  bc_flux=2.130e+00  q_range=[-124.6, 769.3] W/m²
+[   293.7s]   Adam   9000/20000  total=2.3871e+01  pde=5.485e+00  data=1.509e+01  bc_flux=2.027e+00  q_range=[-124.9, 769.6] W/m²
+[   307.3s]   Adam   9500/20000  total=2.0414e+01  pde=4.086e+00  data=1.365e+01  bc_flux=1.955e+00  q_range=[-125.2, 769.9] W/m²
+[   321.7s]   Adam  10000/20000  total=1.6169e+01  pde=1.495e+00  data=1.237e+01  bc_flux=1.634e+00  q_range=[-125.6, 770.1] W/m²
+[   335.4s]   Adam  10500/20000  total=1.5736e+01  pde=2.400e+00  data=1.115e+01  bc_flux=1.535e+00  q_range=[-126.0, 770.3] W/m²
+[   349.5s]   Adam  11000/20000  total=1.5745e+01  pde=3.466e+00  data=9.995e+00  bc_flux=1.432e+00  q_range=[-126.4, 770.4] W/m²
+[   364.1s]   Adam  11500/20000  total=1.2673e+01  pde=1.625e+00  data=9.139e+00  bc_flux=1.377e+00  q_range=[-126.7, 770.4] W/m²
+[   378.8s]   Adam  12000/20000  total=1.1795e+01  pde=1.775e+00  data=8.282e+00  bc_flux=1.206e+00  q_range=[-127.0, 770.4] W/m²
+[   393.2s]   Adam  12500/20000  total=1.0398e+01  pde=1.193e+00  data=7.582e+00  bc_flux=1.145e+00  q_range=[-127.2, 770.4] W/m²
+[   407.4s]   Adam  13000/20000  total=9.6645e+00  pde=1.127e+00  data=6.966e+00  bc_flux=1.124e+00  q_range=[-127.4, 770.4] W/m²
+[   421.7s]   Adam  13500/20000  total=9.6988e+00  pde=1.831e+00  data=6.410e+00  bc_flux=1.047e+00  q_range=[-127.5, 770.4] W/m²
+[   436.3s]   Adam  14000/20000  total=9.5859e+00  pde=2.254e+00  data=5.918e+00  bc_flux=1.017e+00  q_range=[-127.6, 770.4] W/m²
+[   451.3s]   Adam  14500/20000  total=7.7360e+00  pde=8.694e-01  data=5.511e+00  bc_flux=9.913e-01  q_range=[-127.7, 770.4] W/m²
+[   466.7s]   Adam  15000/20000  total=7.1055e+00  pde=7.490e-01  data=5.058e+00  bc_flux=9.540e-01  q_range=[-127.7, 770.4] W/m²
+[   482.2s]   Adam  15500/20000  total=6.6148e+00  pde=7.128e-01  data=4.666e+00  bc_flux=9.126e-01  q_range=[-127.8, 770.4] W/m²
+[   497.2s]   Adam  16000/20000  total=6.2093e+00  pde=6.748e-01  data=4.338e+00  bc_flux=8.826e-01  q_range=[-127.8, 770.4] W/m²
+[   512.7s]   Adam  16500/20000  total=5.7659e+00  pde=6.086e-01  data=3.995e+00  bc_flux=8.565e-01  q_range=[-127.9, 770.4] W/m²
+[   528.7s]   Adam  17000/20000  total=5.4618e+00  pde=5.527e-01  data=3.795e+00  bc_flux=8.350e-01  q_range=[-127.9, 770.4] W/m²
+[   543.9s]   Adam  17500/20000  total=5.1637e+00  pde=5.189e-01  data=3.566e+00  bc_flux=8.105e-01  q_range=[-127.9, 770.4] W/m²
+[   559.3s]   Adam  18000/20000  total=4.8803e+00  pde=4.972e-01  data=3.341e+00  bc_flux=7.848e-01  q_range=[-127.9, 770.5] W/m²
+[   574.3s]   Adam  18500/20000  total=4.6119e+00  pde=4.713e-01  data=3.136e+00  bc_flux=7.592e-01  q_range=[-127.9, 770.5] W/m²
+[   589.5s]   Adam  19000/20000  total=4.3592e+00  pde=4.486e-01  data=2.944e+00  bc_flux=7.333e-01  q_range=[-127.9, 770.5] W/m²
+[   605.9s]   Adam  19500/20000  total=4.2212e+00  pde=4.395e-01  data=2.841e+00  bc_flux=7.157e-01  q_range=[-127.9, 770.5] W/m²
+[   621.3s]   Adam  19999/20000  total=4.1146e+00  pde=4.258e-01  data=2.766e+00  bc_flux=7.026e-01  q_range=[-127.9, 770.5] W/m²
+[   621.3s] Adam finished. Final loss: 4.1146e+00
+[   621.3s] q after Adam: range=[-127.9, 770.5] W/m²
+[   621.3s] 
+--- Stage 2: L-BFGS (400 max closures, strong-Wolfe) ---
+[   621.3s]   L-BFGS #   0  total=4.1144e+00  bc_flux=7.024e-01  data=2.766e+00
+[   622.8s]   L-BFGS #  50  total=4.0856e+00  bc_flux=6.936e-01  data=2.722e+00
+[   624.5s]   L-BFGS # 100  total=4.0432e+00  bc_flux=6.921e-01  data=2.677e+00
+[   626.3s]   L-BFGS # 150  total=3.9124e+00  bc_flux=6.802e-01  data=2.500e+00
+[   628.2s]   L-BFGS # 200  total=3.8460e+00  bc_flux=6.721e-01  data=2.420e+00
+[   629.9s]   L-BFGS # 250  total=3.8295e+00  bc_flux=6.684e-01  data=2.397e+00
+[   631.5s]   L-BFGS # 300  total=3.8286e+00  bc_flux=6.682e-01  data=2.396e+00
+[   633.3s]   L-BFGS # 350  total=3.8278e+00  bc_flux=6.681e-01  data=2.395e+00
+[   635.1s]   L-BFGS # 400  total=3.8269e+00  bc_flux=6.679e-01  data=2.395e+00
+[   635.4s] L-BFGS finished after 411 closures. Final loss: 3.8268e+00
+[   635.4s] Total training time: 635.4 s
+[   635.4s] flux_pred: range=[-127.9, 770.5] W/m²
+[   635.4s] q collapsed to ~0? False  (|q|_max = 770.48)
+[   635.4s] Sensor replay RMSE: 0.7808 K
+[   635.4s] 
+=== METRICS ===
+[   635.4s]   flux_rmse       : 203.8819 W/m²
+[   635.4s]   replay_rmse     : 0.7808 K
+[   635.4s]   ssim_flux       : 0.713156
+[   635.4s]   support_overlap : 0.746269
+[   635.4s]   peak_loc_err    : 0.0
+[   635.4s]   q_max_pred      : 770.48 W/m²
+[   635.4s]   q_max_true      : 1188.57 W/m²
+[   635.4s]   q_collapsed     : False
+[   635.4s]   runtime         : 635.4 s

@@ -52,3 +52,11 @@ initial_condition: 300.0
 #   max_retries: 6
 #   iteration_budget: 10
 #   physical_bounds: [-1.0e6, 1.0e6]
+#   solver_name: tikhonov        # "tikhonov" (default), "tsvd", or "deepxde"
+#
+# DeepXDE solver options (only used when solver_name: deepxde)
+# These are all optional; shown values are defaults.
+#   deepxde_iterations: 5000     # total optimisation steps
+#   deepxde_lr: 0.01             # Adam learning rate
+#   deepxde_optimizer: adam      # "adam" or "lbfgs"
+#   deepxde_device: cpu          # "cpu" or "cuda"
